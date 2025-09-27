@@ -1,0 +1,40 @@
+---
+- name: Week 5 - Opdracht 1 (apache zonder apt + nette fout)
+  hosts: web
+  become: yes
+  gather_facts: false
+
+  tasks:
+    - name: Installeer apache2 via shell (niet via apt module)
+      ansible.builtin.shell: |
+        set -e
+        export DEBIAN_FRONTEND=noninteractive
+        if ! dpkg -s apache2 >/dev/null 2>&1; then
+          apt-get update -y
+          apt-get install -y apache2
+          echo "JUST_INSTALLED"
+        else
+          echo "ALREADY_PRESENT"
+        fi
+      register: apache_install
+      changed_when: "'JUST_INSTALLED' in apache_install.stdout"
+
+    - name: Controleer of Apache draait
+      ansible.builtin.shell: systemctl is-active apache2 || true
+      register: apache_state
+      changed_when: false
+
+    - name: Demonstreer nette fout (block/rescue)
+      block:
+        - name: Forceer een fout (voorbeeld)
+          ansible.builtin.command: /bin/false
+      rescue:
+        - name: Log dat het fout ging, maar ga netjes verder
+          ansible.builtin.debug:
+            msg: "De vorige taak is bewust gefaald en netjes afgehandeld in rescue."
+
+    - name: Toon samenvatting
+      ansible.builtin.debug:
+        msg:
+          - "Install stdout: {{ apache_install.stdout | default('') }}"
+          - "Apache status: {{ apache_state.stdout | default('onbekend') }}"
