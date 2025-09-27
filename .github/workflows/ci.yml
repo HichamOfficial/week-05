@@ -1,0 +1,27 @@
+name: Week 5 CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  lint:
+    name: Syntax check
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check Ansible syntax
+        run: ansible-playbook --syntax-check ansible/site.yml
+
+  deploy:
+    name: Deploy playbook
+    runs-on: self-hosted
+    needs: lint
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Ansible playbook
+        run: ansible-playbook -i ansible/inventory.ini ansible/site.yml
