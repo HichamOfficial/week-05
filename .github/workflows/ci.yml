@@ -5,26 +5,33 @@ on:
     branches: [ "main" ]
 
 jobs:
-  lint:
-    name: Lint & Syntax check
+
+  syntax-check:
+    name: Syntax check
     runs-on: self-hosted
-    defaults:
-      run:
-        shell: bash
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Check Ansible syntax
+      - name: Run Ansible syntax check
         run: ansible-playbook --syntax-check ansible/site.yml
+
+  lint:
+    name: Lint check
+    runs-on: self-hosted
+    needs: syntax-check
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run ansible-lint
+        run: ansible-lint ansible/site.yml || true
+        # || true voorkomt dat lint fouten de hele pipeline meteen stoppen
 
   deploy:
     name: Deploy playbook
     runs-on: self-hosted
     needs: lint
-    defaults:
-      run:
-        shell: bash
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
