@@ -2,7 +2,9 @@ name: Week 5 CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    paths:
+      - 'ansible/**'
+      - '.github/workflows/ci.yml'
 
 jobs:
 
@@ -38,5 +40,7 @@ jobs:
 
       - name: Run Ansible playbook
         run: ansible-playbook -i ansible/inventory.ini ansible/site.yml
+
+        
 
         

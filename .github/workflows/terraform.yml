@@ -2,14 +2,13 @@ name: Week 5 - Opdracht 3 Terraform Pipeline
 
 on:
   push:
-    branches: [ "main" ]
     paths:
       - 'terraform/**'
   workflow_dispatch:
 
 jobs:
   validate:
-    name: ✅ Terraform Validate
+    name: Terraform Validate
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
@@ -19,7 +18,7 @@ jobs:
         run: terraform -chdir=terraform validate
 
   deploy:
-    name: 🚀 Terraform Apply
+    name: Terraform Apply
     runs-on: self-hosted
     needs: validate
     steps:
