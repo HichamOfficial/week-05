@@ -27,11 +27,11 @@ jobs:
         run: terraform -chdir=terraform apply -auto-approve
 
   destroy:
-    name: 🧹 Terraform Destroy (manual only)
+    name: Terraform Destroy (manual only)
     runs-on: self-hosted
     if: github.event_name == 'workflow_dispatch'
     steps:
       - uses: actions/checkout@v4
       - name: Terraform Destroy
         run: terraform -chdir=terraform destroy -auto-approve
-        
+
